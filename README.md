@@ -1,9 +1,11 @@
 # Chamfer Distance API
-Chamfer Distance (CD) is a evaluation metric for two point clouds. It takes the distance of each points into account. For each point in each cloud, CD finds the nearest point in the other point set, and sums the distances up. It is utilized in Shapenet’s shape reconstruction challenge.
+Chamfer Distance (CD) is a evaluation metric for two point clouds. It takes the distance of each points into account. For each point in each cloud, CD finds the nearest point in the other point set, and sums the square of distance up. It is utilized in Shapenet’s shape reconstruction challenge.
 
+The chamfer distance between point cloud *S1* and *S2* is defined as 
 
+![](https://github.com/UM-ARM-Lab/Chamfer-Distance-API/blob/master/formula%20for%20chamfer%20distance.png)
 
-This repo is a guidance on how to compile the code for calculating chamfer distance and a tutorial to use chamfer distance api
+This readme is a guidance on how to compile the code for chamfer distance and a tutorial to use chamfer distance api.
 
 ## Prerequisites
 - [`GCC`](https://gcc.gnu.org) 5.4.0
@@ -26,11 +28,11 @@ python tf_nndistance.py
 ```
 
 ## Chamfer-Distance-API
-After compiling code for tensorflow, we can use the chamfer distance api now. Note the chamfer distance is defined as the sum of **square** of euclidean distance in the API. Try run 
+After compiling code for tensorflow, we can use the Chamfer Distance API now. Note the chamfer distance is defined as the sum of **square** of euclidean distance in the API. Try  
 ```sh
 python chamfer_test.py
 ```
-which will calculate the chamfer output [8.].
+which will calculate chamfer distance between point (1, 1, 1) and (1, 1, -1) and output [8.].
 
 Generally, to use the api, use `cd_api = Chamfer_distance()` to initialize the class, and then use `cd_api.get_chamfer_distance(xyz1,xyz2)` to calculate the chamfer distance. 
 
