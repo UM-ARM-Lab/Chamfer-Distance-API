@@ -5,7 +5,7 @@ import numpy as np
 import time
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 tf.logging.set_verbosity(tf.logging.FATAL)
-nn_distance_module=tf.load_op_library('./chamfer-distance/tf_nndistance_so.so')
+nn_distance_module=tf.load_op_library('./chamfer_distance_api/chamfer-distance/tf_nndistance_so.so')
 
 def nn_distance(xyz1,xyz2):
     '''
@@ -26,15 +26,14 @@ class Chamfer_distance():
         INPUT: verbose: print messages for debug
         '''
         t_prepare_begin = time.time()
-        self.sess = tf.Session()
-        with tf.device('/gpu:0'):
+        self.graph = tf.Graph()
+        with self.graph.as_default():
             self.inp1=tf.placeholder(shape=[None, None, 3], dtype=tf.float32)
             self.inp2=tf.placeholder(shape=[None, None, 3], dtype=tf.float32)
             self.dist1,self.idx1,self.dist2,self.idx2=nn_distance(self.inp1,self.inp2)
             self.dist1_avg = tf.reduce_mean(self.dist1,axis=1)
             self.dist2_avg = tf.reduce_mean(self.dist2,axis=1)
             self.distance= self.dist1_avg + self.dist2_avg
-        self.sess.run(tf.initialize_all_variables())
         t_prepare_end = time.time()
         if verbose:
             print('time to initialize: {}'.format(t_prepare_end-t_prepare_begin))
@@ -48,7 +47,8 @@ class Chamfer_distance():
             xyz1 = np.expand_dims(xyz1,0)
             xyz2 = np.expand_dims(xyz2,0)
         t0=time.time()
-        cd=self.sess.run(self.distance, feed_dict={self.inp1: xyz1, self.inp2: xyz2})
+        with tf.Session(graph=self.graph) as sess:
+            cd=sess.run(self.distance, feed_dict={self.inp1: xyz1, self.inp2: xyz2})
         newt=time.time()
         if verbose:
             print 'time to calculate cd: {}'.format(newt-t0)
